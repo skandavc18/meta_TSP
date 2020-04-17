@@ -8,7 +8,7 @@
 using namespace std; 
   
 // Number of cities in TSP 
-#define V 10
+//#define V 20
   
 // Names of the cities 
 #define GENES ABCDEFGHIJ
@@ -17,7 +17,7 @@ using namespace std;
 #define START 0 
   
 // Initial population size for the algorithm 
-#define POP_SIZE 100
+#define POP_SIZE 150
   
 // Structure of a GNOME 
 // string defines the path traversed 
@@ -53,7 +53,7 @@ bool repeat(string s, char ch)
 // Mutated GNOME is a string 
 // with a random interchange 
 // of two genes to create variation in species 
-string mutatedGene(string gnome) 
+string mutatedGene(string gnome,int V) 
 { 
     while (true) { 
         int r = rand_num(1, V); 
@@ -70,7 +70,7 @@ string mutatedGene(string gnome)
   
 // Function to return a valid GNOME string 
 // required to create the population 
-string create_gnome() 
+string create_gnome(int V) 
 { 
     string gnome = "0"; 
     while (true) { 
@@ -88,7 +88,7 @@ string create_gnome()
 // Function to return the fitness value of a gnome. 
 // The fitness value is the path length 
 // of the path represented by the GNOME. 
-int cal_fitness(string gnome,int map[V][V]) 
+int cal_fitness(string gnome,int **map, int V) 
 { 
     int f = 0; 
     for (int i = 0; i < gnome.size() - 1; i++) { 
@@ -114,7 +114,7 @@ bool lessthan(struct individual t1,
 } 
   
 // Utility function for TSP problem. 
-void TSPUtil(int map[V][V]) 
+int TSPUtil(int **map, int V) 
 { 
     // Generation Number 
     int gen = 1; 
@@ -126,14 +126,15 @@ void TSPUtil(int map[V][V])
   
     // Populating the GNOME pool. 
     for (int i = 0; i < POP_SIZE; i++) { 
-        temp.gnome = create_gnome(); 
-        temp.fitness = cal_fitness(temp.gnome,map); 
+        temp.gnome = create_gnome(V); 
+        temp.fitness = cal_fitness(temp.gnome,map,V); 
         population.push_back(temp); 
     } 
   
-    //cout << "\nInitial population: " << endl << "GNOME     FITNESS VALUE\n"; 
-    for (int i = 0; i < POP_SIZE; i++) 
-        //cout << population[i].gnome << "   "<< population[i].fitness << endl; 
+    //cout << "\nInitial population: " << endl  << "GNOME     FITNESS VALUE\n"; 
+    //for (int i = 0; i < POP_SIZE; i++) 
+    //    cout << population[i].gnome << "   "
+    //         << population[i].fitness << endl; 
     //cout << "\n"; 
   
     bool found = false; 
@@ -150,10 +151,10 @@ void TSPUtil(int map[V][V])
             struct individual p1 = population[i]; 
   
             while (true) { 
-                string new_g = mutatedGene(p1.gnome); 
+                string new_g = mutatedGene(p1.gnome,V); 
                 struct individual new_gnome; 
                 new_gnome.gnome = new_g; 
-                new_gnome.fitness = cal_fitness(new_gnome.gnome,map); 
+                new_gnome.fitness = cal_fitness(new_gnome.gnome,map,V); 
   
                 if (new_gnome.fitness <= population[i].fitness) { 
                     new_population.push_back(new_gnome); 
@@ -179,22 +180,47 @@ void TSPUtil(int map[V][V])
         population = new_population; 
         //cout << "Generation " << gen << " \n"; 
         //cout << "GNOME     FITNESS VALUE\n"; 
+  
         //for (int i = 0; i < POP_SIZE; i++) 
-            //cout << population[i].gnome << "   "<< population[i].fitness << endl; 
+        //    cout << population[i].gnome << "   "
+        //         << population[i].fitness << endl; 
         gen++; 
     } 
-    int min=population[0].fitness;
-        for (int i = 0; i < POP_SIZE; i++) 
+    int min=100000;
+    for (int i = 0; i < POP_SIZE; i++) 
+    {
+        if(min>population[i].fitness)
         {
-            if(min>population[i].fitness)
-                min=population[i].fitness;
+            min=population[i].fitness;
         }
-    cout << min << endl;
+    }
+
+    return min;
 } 
-  
+
+void input_graph(int **distance_links, int V)
+{
+	for(int i=0;i<V;i++)
+	{
+		for(int j=0;j<V;j++)
+		{
+			cin>>distance_links[i][j];
+
+		}
+	}
+}
 int main() 
 { 
-  
-int gr[][10]={{0, 69, 90, 58, 45, 58, 77, 85, 16, 87}, {24, 0, 61, 48, 71, 61, 72, 3, 34, 8}, {87, 15, 0, 36, 75, 26, 25, 8, 30, 56}, {22, 60, 49, 0, 17, 95, 98, 76, 91, 91}, {9, 24, 69, 76, 0, 48, 98, 94, 25, 27}, {53, 90, 83, 34, 14, 0, 52, 62, 16, 91}, {39, 67, 68, 41, 13, 78, 0, 23, 28, 57}, {15, 79, 67, 100, 32, 77, 51, 0, 5, 97}, {96, 28, 82, 40, 46, 10, 81, 33, 0, 5}, {52, 44, 11, 87, 31, 61, 97, 32, 15, 0}};
-TSPUtil(gr); 
+int V;
+scanf("%d",&V);
+int **gr; 
+gr = new int*[V]; 
+
+for (int i = 0; i < V; i++)
+    gr[i] = new int[V];
+//int gr[V][V]={{0,0},{0,0}};
+
+input_graph(gr,V);
+
+cout<<TSPUtil(gr,V)<<endl; 
 } 

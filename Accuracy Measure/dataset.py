@@ -62,6 +62,8 @@ class iterator:
 
 if __name__=="__main__":
     import sys
+    for i in range(1,len(sys.argv)):
+        sys.argv[i]=int(sys.argv[i])
     if len(sys.argv)==5:
         generator(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4]).gen()
     

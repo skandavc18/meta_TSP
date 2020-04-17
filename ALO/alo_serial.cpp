@@ -2,19 +2,15 @@
 #include<stdlib.h>
 #include<time.h>
 #include<string.h>
-#include <random>
-#define DIM 400
-#define POPULATION 150
-#define MAX_ITER 1000
+//#define DIM 20
+#define POPULATION 500
+#define MAX_ITER 2000
 typedef struct memb
 {
     int *arr;
     int fitness;
 }member;
 
-std::random_device dev;
-std::mt19937 rng(dev());
-std::uniform_int_distribution<std::mt19937::result_type> dist(1,DIM);
 
 void print(int *arr,int n)
 {
@@ -39,10 +35,10 @@ unsigned int rand_()
    z4 = ((z4 & 4294967168U) << 13) ^ b;
    return (z1 ^ z2 ^ z3 ^ z4);*/
    
-   return dist(rng);
+   return rand();
 }
 
-double drand_()
+double drand_(int DIM)
 {
    return (double)rand_() / (double)DIM ;
 }
@@ -163,7 +159,7 @@ member *roulette_wheel_selection(member *arr,int r,int c)
 {
     int cum_arr[r];
     cumsum(arr,cum_arr,r,c);
-    double p=-(drand_()*cum_arr[r-1]);
+    double p=-(drand_(c)*cum_arr[r-1]);
     //printf("%d %lf\n",cum_arr[r-1],p);
     for(int i=0;i<r;i++)
     {
@@ -385,6 +381,8 @@ int ALO(int search_agents,int dim,int max_iter,int **graph,int *lb,int *ub,int (
 
 int main()
 {
+    int DIM;
+    scanf("%d",&DIM);
     int r=DIM,c=DIM;
     int **graph = (int **)malloc(r * sizeof(int *)); 
     for (int i=0; i<r; i++) 
@@ -393,6 +391,7 @@ int main()
     {
         for(int j=0;j<DIM;j++)
         {
+            //scanf_s("%d",&graph[i][j]);
             scanf("%d",&graph[i][j]);
         }
     }

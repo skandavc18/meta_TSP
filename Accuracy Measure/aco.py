@@ -1,4 +1,4 @@
-#!/Users/skanda/miniconda3/bin/python
+#!/usr/bin/python3
 import numpy as np
 from numpy import inf
 
@@ -15,9 +15,12 @@ def list2mat(data,dim):
     return d
 
 iteration = 100
-n_ants = 150
-n_citys = 50
+n_ants = 30
+#n_citys = 10
 data=list(map(int,input().split()))
+#print(data)
+n_citys = data[0]
+del data[0]
 
 data=list2mat(data,n_citys)
 d=np.array(data)
@@ -115,5 +118,5 @@ for ite in range(iteration):
 #print('route of all the ants at the end :')
 #print(rute_opt)
 #print()
-print('best path :',best_route)
+#print('best path :',best_route)
 print(int(dist_min_cost[0]) + int(d[int(best_route[-2])-1,0]))

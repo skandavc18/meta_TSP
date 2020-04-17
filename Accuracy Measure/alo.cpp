@@ -2,17 +2,15 @@
 #include<stdlib.h>
 #include<time.h>
 #include<string.h>
-#include <random>
-#define DIM 10
+//#define DIM 20
+#define POPULATION 500
+#define MAX_ITER 2000
 typedef struct memb
 {
     int *arr;
     int fitness;
 }member;
 
-std::random_device dev;
-std::mt19937 rng(dev());
-std::uniform_int_distribution<std::mt19937::result_type> dist(1,DIM);
 
 void print(int *arr,int n)
 {
@@ -37,10 +35,10 @@ unsigned int rand_()
    z4 = ((z4 & 4294967168U) << 13) ^ b;
    return (z1 ^ z2 ^ z3 ^ z4);*/
    
-   return dist(rng);
+   return rand();
 }
 
-double drand_()
+double drand_(int DIM)
 {
    return (double)rand_() / (double)DIM ;
 }
@@ -161,7 +159,7 @@ member *roulette_wheel_selection(member *arr,int r,int c)
 {
     int cum_arr[r];
     cumsum(arr,cum_arr,r,c);
-    double p=-(drand_()*cum_arr[r-1]);
+    double p=-(drand_(c)*cum_arr[r-1]);
     //printf("%d %lf\n",cum_arr[r-1],p);
     for(int i=0;i<r;i++)
     {
@@ -383,21 +381,27 @@ int ALO(int search_agents,int dim,int max_iter,int **graph,int *lb,int *ub,int (
 
 int main()
 {
-    srand( (unsigned)time(NULL) );
-    int gr[][10]={{0, 69, 90, 58, 45, 58, 77, 85, 16, 87}, {24, 0, 61, 48, 71, 61, 72, 3, 34, 8}, {87, 15, 0, 36, 75, 26, 25, 8, 30, 56}, {22, 60, 49, 0, 17, 95, 98, 76, 91, 91}, {9, 24, 69, 76, 0, 48, 98, 94, 25, 27}, {53, 90, 83, 34, 14, 0, 52, 62, 16, 91}, {39, 67, 68, 41, 13, 78, 0, 23, 28, 57}, {15, 79, 67, 100, 32, 77, 51, 0, 5, 97}, {96, 28, 82, 40, 46, 10, 81, 33, 0, 5}, {52, 44, 11, 87, 31, 61, 97, 32, 15, 0}};
-    int r=10,c=10;
+    int DIM;
+    scanf("%d",&DIM);
+    int r=DIM,c=DIM;
     int **graph = (int **)malloc(r * sizeof(int *)); 
     for (int i=0; i<r; i++) 
         graph[i] = (int *)malloc(c * sizeof(int)); 
-    for(int i=0;i<10;i++)
+    for(int i=0;i<DIM;i++)
     {
-        for(int j=0;j<10;j++)
+        for(int j=0;j<DIM;j++)
         {
-            graph[i][j]=gr[i][j];
+            //scanf_s("%d",&graph[i][j]);
+            scanf("%d",&graph[i][j]);
         }
     }
-    int lb[]={1,1,1,1,1,1,1,1,1,1};
-    int ub[]={90,90,90,90,90,90,90,90,90,90};
-    printf("shortest tsp path cost %d\n",ALO(50,10,500,graph,lb,ub,sum));
+    int lb[DIM]={0};
+    int ub[DIM]={0};
+    for(int i=0;i<DIM;i++)
+        ub[i]=1000;
+    printf("%d\n",ALO(POPULATION,DIM,MAX_ITER,graph,lb,ub,sum));
+    for (int i=0; i<r; i++) 
+        free(graph[i]);
+    free(graph); 
     return 0;
 }
