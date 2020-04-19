@@ -172,7 +172,7 @@ void update_grasshopper(int **graph, grasshopper **S, int curr, int search_agent
     }
     for(int i=0;i<dim;i++)
     {
-        for(int j=0;j<search_agents;j++)
+        for(int j=0;j<search_agents;j++)  // this loop may be parallelized
         {
             if(j != curr)
             {
@@ -186,7 +186,7 @@ void update_grasshopper(int **graph, grasshopper **S, int curr, int search_agent
         temp[i] = S[r]->path[i];
     }
     //print(temp,dim);
-    for(int i=0;i<dim;i++)
+    for(int i=0;i<dim;i++)  // this loop will be parallelized
     {
         //temp[i] = roulette_wheel_selection(temp[i],c,S[curr]->path[i],(1-c));
         temp[i] = roulette_wheel_selection(temp[i],(1-c),S[curr]->path[i],c);
@@ -195,7 +195,7 @@ void update_grasshopper(int **graph, grasshopper **S, int curr, int search_agent
     //correct_path(temp,dim);
     //printf("%f\n",c);
     //print(S[curr]->path,dim);
-    for(int i=0;i<dim;i++)
+    for(int i=0;i<dim;i++)  // this loop will be parallelized
     {
         S[curr]->path[i] = roulette_wheel_selection(temp[i],c,S[elite]->path[i],(1-c));
         //S[curr]->path[i] = roulette_wheel_selection(temp[i],(1-c),S[elite]->path[i],c);
@@ -233,7 +233,7 @@ int GOA(int search_agents, int dim, double cmax, double cmin, int Max_iterations
     while(l < Max_iterations)
     {
         c = cmax - l*(cmax - cmin)/Max_iterations;
-        for(int i=0;i<search_agents;i++)    
+        for(int i=0;i<search_agents;i++)       // this loop will be parallelized
         {
             //printf("%d %d\n",i,elite);
             //print(S[elite]->path,dim);
@@ -252,7 +252,7 @@ int GOA(int search_agents, int dim, double cmax, double cmin, int Max_iterations
 
 int main()
 {
-    srand( (unsigned)time(NULL) );
+    sfitness( (unsigned)time(NULL) );
     int gr[][10]={{0, 69, 90, 58, 45, 58, 77, 85, 16, 87}, {24, 0, 61, 48, 71, 61, 72, 3, 34, 8}, {87, 15, 0, 36, 75, 26, 25, 8, 30, 56}, {22, 60, 49, 0, 17, 95, 98, 76, 91, 91}, {9, 24, 69, 76, 0, 48, 98, 94, 25, 27}, {53, 90, 83, 34, 14, 0, 52, 62, 16, 91}, {39, 67, 68, 41, 13, 78, 0, 23, 28, 57}, {15, 79, 67, 100, 32, 77, 51, 0, 5, 97}, {96, 28, 82, 40, 46, 10, 81, 33, 0, 5}, {52, 44, 11, 87, 31, 61, 97, 32, 15, 0}};
     int r=10,c=10;
     int **graph = (int **)malloc(r * sizeof(int *)); 
