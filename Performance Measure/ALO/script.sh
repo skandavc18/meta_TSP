@@ -1,17 +1,17 @@
-cd ../../GOA
-g++ -o goa_s goa_serial.cpp
-mv goa_s ../'Performance Measure'/GOA
+cd ../../ALO
+g++ -o alo_s alo_serial.cpp
+mv alo_s ../'Performance Measure'/ALO
 cd parallel
 make
-mv goa_p ../../'Performance Measure'/GOA
-cp defs.h ../../'Performance Measure'/GOA
-cp goa.cl ../../'Performance Measure'/GOA
-cp goa.c ../../'Performance Measure'/GOA
+mv alo_p ../../'Performance Measure'/ALO
+cp defs.h ../../'Performance Measure'/ALO
+cp alo.cl ../../'Performance Measure'/ALO
+cp alo.c ../../'Performance Measure'/ALO
 make clean
-cd ../../'Performance Measure'/GOA
+cd ../../'Performance Measure'/ALO
 python3 test.py 200
-rm goa_p
-rm goa_s
+rm alo_p
+rm alo_s
 rm defs.h
-rm goa.cl
-rm goa.c
+rm alo.cl
+rm alo.c
