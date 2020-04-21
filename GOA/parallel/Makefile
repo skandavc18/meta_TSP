@@ -1,11 +1,11 @@
-a.out: implementation.o goa.o 
-	gcc implementation.o goa.o -framework OpenCL -o goa_p
+a.exe: implementation.o goa.o 
+	cl.exe -o goa_p.exe goa.o implementation.o lib/OpenCL.lib
 
 implementation.o: implementation.c defs.h
-	gcc -c implementation.c
+	cl.exe -c implementation.c
 
 goa.o: goa.c defs.h
-	gcc -c goa.c
+	cl.exe -c goa.c
 
 clean: 
 	rm -f *.o *.out

@@ -1,7 +1,7 @@
 import dataset 
 import subprocess
 
-data=dataset.iterator("tsp_dataset_100_10_d.json").read()
+data=dataset.iterator("tsp_dataset_10_10_d.json").read()
 
 def mat2list(mat):
     l=[]
@@ -9,15 +9,15 @@ def mat2list(mat):
         l+=i
     
     l=list(map(str,l))
-
-    return ' '.join(l)
+    #print(' '.join(l))
+    return ' '.join(l).encode()
 
 actual_results=[]
 
 meta_results=[]
 
 for i in data:
-    process = subprocess.Popen(["./goa"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    process = subprocess.Popen(["./goa_p.exe"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     process.stdin.write(mat2list(data[i][0]))
     res=int(process.communicate()[0])
     meta_results.append(res)

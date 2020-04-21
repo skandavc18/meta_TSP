@@ -8,7 +8,7 @@ int main() {
         ub[i]=1000;
    for(int i=0;i<DIM*DIM;i++)
    {
-      scanf("%d",&graph[i]);
+      scanf_s("%d",&graph[i]);
    }
    printf("%d",GOA(graph,ub));
    return 0;

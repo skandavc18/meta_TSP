@@ -179,10 +179,11 @@ void update_grasshopper(int **graph, grasshopper **S, int curr, int search_agent
                 prob[j]+=(ub[i]-abs(graph[S[j]->path[i-1]][S[j]->path[i]]-graph[S[curr]->path[i-1]][S[curr]->path[i]]))/ub[i];
                 //prob[j]=distance(S[curr]->path,S[j]->path, dim);
                 //printf("%d %d\n",ub[i],lb[i]);
+                //printf("%f",prob[j]);
             }
         }
         int r = roulette_wheel_selection(prob, search_agents, dim);
-        //printf("%d\n\n",r);
+        //printf("%d",temp[i]);
         temp[i] = S[r]->path[i];
     }
     //print(temp,dim);
@@ -252,7 +253,6 @@ int GOA(int search_agents, int dim, double cmax, double cmin, int Max_iterations
 
 int main()
 {
-    sfitness( (unsigned)time(NULL) );
     int gr[][10]={{0, 69, 90, 58, 45, 58, 77, 85, 16, 87}, {24, 0, 61, 48, 71, 61, 72, 3, 34, 8}, {87, 15, 0, 36, 75, 26, 25, 8, 30, 56}, {22, 60, 49, 0, 17, 95, 98, 76, 91, 91}, {9, 24, 69, 76, 0, 48, 98, 94, 25, 27}, {53, 90, 83, 34, 14, 0, 52, 62, 16, 91}, {39, 67, 68, 41, 13, 78, 0, 23, 28, 57}, {15, 79, 67, 100, 32, 77, 51, 0, 5, 97}, {96, 28, 82, 40, 46, 10, 81, 33, 0, 5}, {52, 44, 11, 87, 31, 61, 97, 32, 15, 0}};
     int r=10,c=10;
     int **graph = (int **)malloc(r * sizeof(int *)); 
@@ -267,6 +267,6 @@ int main()
     }
     int lb[]={1,1,1,1,1,1,1,1,1,1};
     int ub[]={90,90,90,90,90,90,90,90,90,90};
-    printf("shortest tsp path cost %d\n",GOA(50,10,1,0.00001,500,graph,lb,ub,sum));
+    printf("shortest tsp path cost %d\n",GOA(50,10,1,0.00001,50,graph,lb,ub,sum));
     return 0;
 }

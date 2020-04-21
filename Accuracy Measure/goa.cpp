@@ -185,7 +185,7 @@ void update_grasshopper(int **graph, grasshopper **S, int curr, int search_agent
             }
         }
         int r = roulette_wheel_selection(prob, search_agents, dim);
-        //printf("%d\n\n",r);
+        //printf("%d\n",temp[i]);
         temp[i] = S[r]->path[i];
     }
     //print(temp,dim);

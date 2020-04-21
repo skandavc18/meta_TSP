@@ -1,6 +1,7 @@
 import json
 import random
 import dp
+import time
 class generator:
 
     def __init__(self,sample_size=10,dim=10,a=1,b=100):
@@ -8,9 +9,10 @@ class generator:
         self.dim=dim
         self.a=a
         self.b=b
-        file_name="tsp_dataset_"+str(sample_size)+"_"+str(dim)+"_d.json"
+        file_name="datasets/tsp_dataset_"+str(sample_size)+"_"+str(dim)+"_d.json"
         self.file_name=file_name
         self.data={}
+        self.time_=[]
 
     def row_gen(self):
         graph=[[random.randint(self.a,self.b) for i in range(self.dim)] for j in range(self.dim)]
@@ -18,18 +20,31 @@ class generator:
             graph[i][i]=0
         
         return graph 
+
+    def input_gen(self):
+        d={}
+        for i in range(self.sample_size):
+            d[i]=self.row_gen()
+
+        return d
     
     def gen(self):
         for i in range(self.sample_size):
             temp=self.row_gen()
+            start_time=time.perf_counter()
             res=dp.tsp(self.dim,temp).solution()
+            end_time=time.perf_counter()
             self.data[i]=[temp,int(res[0]),[int(j) for j in res[1]]]
+            self.time_.append(abs(start_time-end_time))
 
         with open(self.file_name, 'w') as outfile:
             json.dump(self.data, outfile, sort_keys = True, indent = 4,
                ensure_ascii = True)
         
         return self.data
+    
+    def avg_time(self):
+        return sum(self.time_)/len(self.time_)
 
 class iterator:
 
@@ -47,6 +62,8 @@ class iterator:
 
 if __name__=="__main__":
     import sys
+    for i in range(1,len(sys.argv)):
+        sys.argv[i]=int(sys.argv[i])
     if len(sys.argv)==5:
         generator(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4]).gen()
     
@@ -54,7 +71,7 @@ if __name__=="__main__":
         generator(sys.argv[1],sys.argv[2],sys.argv[3]).gen()
 
     elif len(sys.argv)==3:
-        generator(int(sys.argv[1]),int(sys.argv[2])).gen()
+        generator(sys.argv[1],sys.argv[2]).gen()
 
     elif len(sys.argv)==2:
         generator(sys.argv[1]).gen()
