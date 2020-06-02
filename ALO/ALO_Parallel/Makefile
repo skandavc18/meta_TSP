@@ -1,4 +1,4 @@
-a.out: implementation.o alo.o 
+alo: implementation.o alo.o 
 	gcc -o alo alo.o implementation.o -lOpenCL
 
 implementation.o: implementation.c defs.h
@@ -8,4 +8,4 @@ alo.o: alo.c defs.h
 	gcc -c alo.c
 
 clean: 
-	rm -f *.o *.out
+	rm -f *.o alo

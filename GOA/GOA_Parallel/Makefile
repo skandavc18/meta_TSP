@@ -8,4 +8,4 @@ goa.o: goa.c defs.h
 	gcc -c goa.c
 
 clean: 
-	rm -f *.o *.out
+	rm -f *.o goa

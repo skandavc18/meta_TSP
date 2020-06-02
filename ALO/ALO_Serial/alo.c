@@ -12,7 +12,7 @@ typedef struct memb
 }member;
 
 
-void print(int *arr,int n)
+void print(int *arr,int n) // to print the path
 {
     for(int i=0;i<n;i++)
     {
@@ -38,9 +38,9 @@ unsigned int rand_()
    return rand();
 }
 
-double drand_()
+double drand_()// to generate random numbers
 {
-   return (double)rand_() / (double)DIM ;
+   return (double)rand_() / (double)DIM ; 
 }
 
 int sum(int *x,int **graph,int n)
@@ -108,7 +108,7 @@ void rand_arr(int *arr,int c)
         randomize(arr,c);
 }
 
-void rand_init(member *arr,int r,int c)
+void rand_init(member *arr,int r,int c) // initialization of the population
 {
     for(int i=0;i<r;i++)// parallelize this loop
     {
@@ -117,7 +117,7 @@ void rand_init(member *arr,int r,int c)
     }
 }
 
-int max_fitness(member *arr,int r,int c)
+int max_fitness(member *arr,int r,int c) // find min fittness
 {
     int max=arr[0].fitness;int pos=0;
     for(int i=0;i<r;i++)
@@ -145,7 +145,7 @@ int min_fitness(member *arr,int r,int c)
     return pos;
 }
 
-void cumsum(member *arr,int *cum_arr,int r,int c)
+void cumsum(member *arr,int *cum_arr,int r,int c) // to find cumulative sum
 {
     int sum=0;
     for(int i=0;i<r;i++)
@@ -155,7 +155,7 @@ void cumsum(member *arr,int *cum_arr,int r,int c)
     }
 }
 
-member *roulette_wheel_selection(member *arr,int r,int c)
+member *roulette_wheel_selection(member *arr,int r,int c) // implements roulette wheel selection
 {
     int cum_arr[r];
     cumsum(arr,cum_arr,r,c);
@@ -179,8 +179,8 @@ void update_b(int *x,int dim,double I)
     }
 }
 
-void normalize(int *arr,int **graph,int *lb,int *ub,int dim)
-{
+void normalize(int *arr,int **graph,int *lb,int *ub,int dim) // function to normalize the paths.
+{ 
     int i=0,j=0;
     int *set=(int *)calloc(dim,sizeof(int));
     int *pos=(int *)calloc(dim,sizeof(int));
@@ -213,6 +213,7 @@ void normalize(int *arr,int **graph,int *lb,int *ub,int dim)
 
 member* random_walk(int dim,int max_iter,int **graph,int *lb,int *ub,member *selected,int curr_iter)
 {
+    // this function implements random walk of ants presented in the paper
     double I=1;
     if(curr_iter>max_iter/10)
         I=0.1;
@@ -242,7 +243,7 @@ member* random_walk(int dim,int max_iter,int **graph,int *lb,int *ub,member *sel
 
 }
 
-void correct_path(int *arr,int dim)
+void correct_path(int *arr,int dim) // function to correct the path. If there are repated nodes in the path, it replaces them with nodes not repeated
 {
     int *set=(int *)calloc(dim,sizeof(int));int j=0,k=0;
     for(j=0;j<dim;j++)
@@ -269,7 +270,7 @@ void correct_path(int *arr,int dim)
     free(set);
 }
 
-void pos_update(int *arr,int **graph,member *RA,member *RE,int dim) //may be parallelized
+void pos_update(int *arr,int **graph,member *RA,member *RE,int dim) // ant position update. 
 {
     int old_dist=0,ra_dist=0,re_dist=0,j=0;
     int *set=(int *)calloc(dim,sizeof(int));

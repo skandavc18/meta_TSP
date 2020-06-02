@@ -186,6 +186,7 @@ int best_agent(grasshopper **S, int search_agents) //function to find elite sear
 
 int GOA(int search_agents, int dim, double cmax, double cmin, int Max_iterations, int **graph, int *lb, int *ub, int (*func)(int *,int **,int))
 {
+    //main function where algorithm is implemented
     grasshopper *S[search_agents];
     for(int i=0;i<search_agents;i++) 
         S[i] = init_grasshopper(dim);
