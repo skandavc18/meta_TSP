@@ -15,7 +15,7 @@ void print(int *arr)
     printf("\n");
 }
 
-cl_kernel best_agent(cl_program program,cl_mem buffer,cl_mem elite_buffer)
+cl_kernel best_agent(cl_program program,cl_mem buffer,cl_mem elite_buffer) //function to create kernel for finding best agent
 {
     cl_kernel kernel = clCreateKernel(program,"best_agent", &err);
     if(err < 0) {
@@ -31,7 +31,7 @@ cl_kernel best_agent(cl_program program,cl_mem buffer,cl_mem elite_buffer)
     return kernel;
 }
 
-cl_kernel fitness(cl_program program,cl_mem buffer,cl_mem graph)
+cl_kernel fitness(cl_program program,cl_mem buffer,cl_mem graph) //function to create kernel for calculating max fitness
 {
     cl_kernel kernel = clCreateKernel(program,"fitness", &err);
     if(err < 0) {
@@ -48,7 +48,7 @@ cl_kernel fitness(cl_program program,cl_mem buffer,cl_mem graph)
     return kernel;
 }
 
-cl_kernel grasshopper_swarm(cl_program program,cl_mem S,cl_mem elite,int c,cl_mem graph,cl_mem ub,int rand_num)
+cl_kernel grasshopper_swarm(cl_program program,cl_mem S,cl_mem elite,int c,cl_mem graph,cl_mem ub,int rand_num) //function to create kernel for grasshopper swarm implementation
 {
     cl_kernel kernel = clCreateKernel(program,"grasshopper_swarm", &err);
     if(err < 0) {
@@ -70,7 +70,7 @@ cl_kernel grasshopper_swarm(cl_program program,cl_mem S,cl_mem elite,int c,cl_me
     return kernel;
 }
 
-cl_kernel init_grasshopper(cl_program program,cl_mem buffer,int rand_num)
+cl_kernel init_grasshopper(cl_program program,cl_mem buffer,int rand_num)   //function to create kernel for initialising grasshopper
 {
     cl_kernel kernel = clCreateKernel(program,"init_grasshopper", &err);
     if(err < 0) {
@@ -107,7 +107,7 @@ cl_kernel mem_copy(cl_program program,cl_mem destination,cl_mem src_buffer ,cl_m
     return kernel;
 }
 
-void enqueue(cl_command_queue queue,cl_kernel kernel[6],const size_t *global_sizes,const size_t *local_sizes,int a,int b)
+void enqueue(cl_command_queue queue,cl_kernel kernel[6],const size_t *global_sizes,const size_t *local_sizes,int a,int b) //function to equeue kernel into queue
 {
     
     for(int i=a;i<b;i++)
@@ -126,8 +126,8 @@ void enqueue(cl_command_queue queue,cl_kernel kernel[6],const size_t *global_siz
     }
 }
 
-cl_program build_program(cl_context ctx, cl_device_id dev, const char* filename) {
-
+cl_program build_program(cl_context ctx, cl_device_id dev, const char* filename) //function to build the opencl program
+{
    cl_program program;
    FILE *program_handle;
    char *program_buffer, *program_log;
@@ -170,8 +170,8 @@ cl_program build_program(cl_context ctx, cl_device_id dev, const char* filename)
 
    return program;
 }
-cl_device_id create_device() {
-
+cl_device_id create_device()   //function to get the opencl device
+{
    cl_platform_id platform;
    cl_device_id dev;
    int err;
@@ -207,8 +207,6 @@ int GOA(int *graph,int *ub)
     cl_int err;
     cl_mem S_buffer,graph_buffer,elite_buffer,temp_elite_buffer,ub_buffer;
     
-    //int graph1[DIM*DIM];
-    //memmove(graph1,graph,sizeof(int)*DIM*DIM);
     grasshopper S[SEARCH_AGENTS];
     grasshopper elite; 
 
@@ -227,6 +225,7 @@ int GOA(int *graph,int *ub)
 
     program = build_program(context, device, PROGRAM_FILE);
 
+    //Creation of buffers
     S_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE |
          CL_MEM_COPY_HOST_PTR, SEARCH_AGENTS * sizeof(grasshopper),&S, &err); 
     ub_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE |
@@ -256,6 +255,7 @@ int GOA(int *graph,int *ub)
     const size_t local_sizes[]={local_size,local_size,1,local_size,1,1};
     const size_t global_sizes[]={global_size,global_size,1,global_size,1,DIM+1};
 
+    //Creation of kernels
     kernel[0]=init_grasshopper(program,S_buffer,rand());
     kernel[1]=fitness(program,S_buffer,graph_buffer); 
     kernel[2]=best_agent(program,S_buffer,temp_elite_buffer);
@@ -263,25 +263,25 @@ int GOA(int *graph,int *ub)
     kernel[5]=mem_copy(program,elite_buffer,S_buffer,temp_elite_buffer);
 
     enqueue(queue,kernel,global_sizes,local_sizes,0,3);
-    //printf("here");
     while(current_iter<MAX_ITER)
     {
       kernel[3]=grasshopper_swarm(program,S_buffer,elite_buffer,current_iter,graph_buffer,ub_buffer,rand());
       enqueue(queue,kernel,global_sizes,local_sizes,3,6);
       current_iter++;
       clReleaseKernel(kernel[3]);
-      //printf("hi");
     }
 
     clEnqueueReadBuffer(queue,elite_buffer, CL_TRUE, 0,sizeof(grasshopper),&elite, 0, NULL, NULL );
 
-    
+    //Releasing kernels
     for(int i=0;i<6;i++)
     {
         if(i==3) //because already released
           continue; 
         clReleaseKernel(kernel[i]);
     }
+
+    //Releasing buffers
     clReleaseMemObject(S_buffer);
     clReleaseMemObject(graph_buffer);
     clReleaseMemObject(ub_buffer);
@@ -290,8 +290,6 @@ int GOA(int *graph,int *ub)
     clReleaseCommandQueue(queue);
     clReleaseProgram(program);
     clReleaseContext(context);
-    //print(elite.path);
 
     return -elite.fitness;
-
 }
